@@ -22,7 +22,7 @@ class RozetkaPage(RozetkaBase):
     # результати пошуку
     def verify_search_results(self):
         time.sleep(3)
-        results = self.driver.find_elements(By.CLASS_NAME, "//rz-indexed-link/a/span")
+        results = self.driver.find_elements(By.CSS_SELECTOR, "catalog-heading.ng-star-inserted")
 
         assert len(results) > 0, "Результати пошуку не знайдено"
         return results
