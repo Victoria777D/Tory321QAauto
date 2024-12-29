@@ -2,7 +2,7 @@ from modules.ui.page_objects.rozetka_base import RozetkaBase
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
-import time
+
 
 class RozetkaPage(RozetkaBase):
     URL = "https://rozetka.com.ua/"
@@ -21,7 +21,6 @@ class RozetkaPage(RozetkaBase):
 
     # результати пошуку
     def verify_search_results(self):
-        time.sleep(3)
         results = self.driver.find_elements(By.CSS_SELECTOR, "catalog-heading.ng-star-inserted")
 
         assert len(results) > 0, "Результати пошуку не знайдено"
@@ -35,18 +34,16 @@ class RozetkaPage(RozetkaBase):
 
     # додаємо товар до кошика
     def add_product_to_cart(self):
-         time.sleep(3)
+        
          add_to_cart_button = self.driver.find_element(By.CSS_SELECTOR, ".buy-button.button.button--with-icon.button--green.button--medium.buy-button--tile.ng-star-inserted")
          add_to_cart_button.click()
 
     # перевіряємо, чи з'явилось повідомлення про додавання товару в кошик
     def verify_add_to_cart_message(self):
         try:
-            time.sleep(3)
             cart_message = self.driver.find_element(By.CSS_SELECTOR, "h2.border.padding.ng-star-inserted")
             return cart_message.text
         # виключення, якщо повідомлення не буде знайдено
         except Exception as e:
             raise AssertionError("Повідомлення про додавання товару не з'явилось") from e 
     
-

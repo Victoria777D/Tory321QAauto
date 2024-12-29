@@ -1,7 +1,7 @@
 from modules.ui.page_objects.rozetka_page import RozetkaPage
 import pytest
 
-@pytest.mark.ui 
+@pytest.mark.ui                                                                  
 def test_search_and_add_to_cart():
     rozetka_page = RozetkaPage()
 
