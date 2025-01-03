@@ -1,7 +1,7 @@
 from modules.ui.page_objects.nova_poshta_base import NovaPoshtaBase
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
-import time
+
 
 
 # клас для взаємодії зі сторінкою
@@ -15,7 +15,7 @@ class NovaPoshtaPage(NovaPoshtaBase):
     def go_to(self):
         self.driver.get(NovaPoshtaPage.URL)
         self.close_popup()
-        time.sleep(10)
+        
     # перевіряємо наявність спливаючого вікна
     def close_popup(self):
         # для закриття всіх вспливаючих вікон
@@ -24,7 +24,6 @@ class NovaPoshtaPage(NovaPoshtaBase):
             try:
                 popup_close_button = self.driver.find_element(By.CSS_SELECTOR, "#main_page")
                 popup_close_button.click()
-                time.sleep(10)
             except NoSuchElementException:
                 try:
                     # закриваємо друге вікно якщо є
@@ -33,16 +32,12 @@ class NovaPoshtaPage(NovaPoshtaBase):
                         # перевіряємо атрибут class
                         close_button = self.driver.find_element(By.CLASS_NAME, "modal-close")
                         close_button.click()
-                        time.sleep(10)
                     else:
                         break # виходить з циклу якщо нема модального вікна
                 except NoSuchElementException:
                     break # виходить з циклу якщо більше немає спливаючих вікон
 
-    time.sleep(30)
 
-
-    
     # знаходимо центр підтримки клієнтів і клікаєм на нього
     def go_to_support_center(self):
         support_link = self.driver.find_element(By.CSS_SELECTOR, "#online_chat > a")

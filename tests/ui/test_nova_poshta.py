@@ -18,7 +18,7 @@ def test_track_parcel():
     nv_poshta.click_tracking()
 
     # вводимо номер посилки
-    nv_poshta.enter_parcel_number(20451002181578)
+    nv_poshta.enter_parcel_number(20451**2181***)
     
     # натискаємо кнопку пошук
     result_message = nv_poshta.click_search()
