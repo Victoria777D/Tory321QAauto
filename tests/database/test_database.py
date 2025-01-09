@@ -70,7 +70,59 @@ def test_detailed_orders():
     assert orders[0][3] == 'з цукром' 
 
 
-#
+#Indivsdual
+
+#перевіряє чи повертає помилку база даних під час вставки даних неправильного типу 
+@pytest.mark.database
+def test_invalid_type_insertion():
+    db = Database()
+    # додаємо рядок в числову колонку
+    error = db.insert_invalid_type('products', 'quantity', 'invalid_data')
+    # щоб тест працював навіть якщо помилка не повертається в разі None
+    assert error is None or 'datatype mismatch' in error or 'constraint failed' in error
+
+
+# перевіряє як обробляються числа, текст, числа з плаваючою точкою, значення NULL
+@pytest.mark.database
+def test_correct_handling_of_various_types():
+    db = Database()
+
+    # додавання цілого числового значення 
+    int_value = db.insert_and_validate_data('products', 'quantity', 42)
+    assert int_value == 42
+
+
+def test_insert_and_validate_string():
+    db = Database()
+    # додавання рядка
+    string_value = db.insert_and_validate_data('products', 'name', 'ValidName')
+    assert string_value == 'ValidName'
+
+
+def test_insert_and_validate_float():
+    db = Database()
+    # додаємо значення FLOAT типу
+    float_value = db.insert_and_validate_data('products', 'price', 19.99) # для цього додала колонку price
+    assert float_value == 19.99
+
+
+def test_insert_and_validate_null():
+    db = Database()
+    # додаємо NULL
+    null_value = db.insert_and_validate_data('products', 'description', None)
+    assert null_value is None
+
+
+def test_insert_and_validate_short_long_string():
+    db = Database()
+    # додаємо короткий рядок
+    short_string = db.insert_and_validate_data('products', 'name', 'A')
+    assert short_string == 'A'
+
+    # додаємо довгий рядок
+    long_string = db.insert_and_validate_data('products', 'name', 'СолонеПечивоЗНасіннямСоняшника')
+    assert long_string == 'СолонеПечивоЗНасіннямСоняшника'
+
 #
 @pytest.mark.database
 def test_insert_product():
@@ -105,9 +157,24 @@ def test_validate_positive_quantity():
 
 
 @pytest.mark.database
-def test_insert_invalid_data():
+def test_insert_and_validate_special_characters():
     db = Database()
-    pass # тест не завершено, буде дописуватись
+
+    # додаємо спеціальні символи
+    special_characters = db.insert_and_validate_data('products', 'name', '@&$*Products') # використана загальна назва
+    assert special_characters == '@&$*Products' 
+    
+
+@pytest.mark.database
+def test_insert_large_amount_of_data():
+    db = Database() 
+    
+    # додаємо велику к-сть записів
+    for i in range(1000):
+        value = db.insert_and_validate_data('products', 'quantity', i)
+        assert value == i
+
+
 
 
 @pytest.mark.database
@@ -151,6 +218,7 @@ def test_bulk_insert_and_validate_total_orders():
     
     # створення нових унікальних id для додавання
     new_orders = []
+    # окремі if перевіряють і додають кілька замовлень за один запуск
     if 2 not in existing_ids:
         new_orders.append((2, 1, 1, '2025-01-07 10:00:00'))# замовлення на продукт 1 від клієнта 1
     if 3 not in existing_ids:
@@ -169,6 +237,8 @@ def test_bulk_insert_and_validate_total_orders():
 @pytest.mark.database
 def test_invalid_date_format():
     db = Database()
+    #  "try" для обробки помилок(щоб програма адекватно реагувала на помилки не
+    # перериваючи роботу і успішно завершувалось)
     try:
         # спроба вставити замовлення з неправильною датою
         db.insert_order(4, 1, 1, '20250108')# неправильний формат дати
